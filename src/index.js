@@ -10,13 +10,22 @@ console.log(`Storage available: ${storageAvailable("localStorage")}`);
 const img = document.querySelector("img");
 const btn = document.querySelector("#btn");
 let search = document.querySelector("#search");
+let dateBox = document.querySelector("#date1");
 btn.addEventListener("click", (event) => testing(event));
 btn.addEventListener("click", fetchNewPic);
 
 function fetchNewPic() {
-  console.log("fetching pic...");
+  console.log("fetching weather...");
+  let searchString
+  console.log("date:" + dateBox.value, !dateBox.value)
+  if (dateBox.value) {
+    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}/${dateBox.value}?key=TNK3W4F4DRB846HC8URN7GCNE&include=days&elements=tempmax,tempmin,temp`
+  } else {
+    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}?key=TNK3W4F4DRB846HC8URN7GCNE&include=days&elements=tempmax,tempmin,temp`
+  }
+  console.log(searchString)
   fetch(
-    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}?key=TNK3W4F4DRB846HC8URN7GCNE`,
+    searchString,
     { mode: "cors" }
   )
     .then(function (response) {
