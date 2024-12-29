@@ -13,7 +13,22 @@
     />
     <script src="index.js" defer></script>
   </head>
-  <body>
+  <body
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    "
+  >
+    <div style="margin: 12px">
+      <label for="search">search:</label>
+      <input type="text" id="search" />
+      <button id="btn">go</button>
+    </div>
+
+    <img src="#" style="display: none" />
+
     <svg xmlns="http://www.w3.org/2000/svg" hidden style="display: none">
       <symbol id="svg-fast-list" viewBox="0 -960 960 960">
         <path
