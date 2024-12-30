@@ -19,9 +19,9 @@ function fetchNewPic() {
   let searchString
   console.log("date:" + dateBox.value, !dateBox.value)
   if (dateBox.value) {
-    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}/${dateBox.value}?key=TNK3W4F4DRB846HC8URN7GCNE&include=days&elements=tempmax,tempmin,temp`
+    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}/${dateBox.value}?key=TNK3W4F4DRB846HC8URN7GCNE`
   } else {
-    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}?key=TNK3W4F4DRB846HC8URN7GCNE&include=days&elements=tempmax,tempmin,temp`
+    searchString =`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}?key=TNK3W4F4DRB846HC8URN7GCNE&iconSet=icons1`
   }
   console.log(searchString)
   fetch(
@@ -34,7 +34,7 @@ function fetchNewPic() {
     .then(function (response) {
       //img.style.display = "block";
       //img.src = response.data.images.original.url;
-      console.log(response)
+      console.log(response.days.map((day) =>(day.description)))
     });
 }
 
