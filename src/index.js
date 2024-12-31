@@ -1,4 +1,5 @@
 import "./styles.css";
+import { add, format } from "date-fns";
 import storageAvailable from "./local-storage.js";
 //import ClassTemplate from "./class-template.js";
 import gifCloudy from "./gifs/cloudy.gif";
@@ -28,8 +29,10 @@ function removeAllChildNodes(parent) {
 }
 
 function dayData(APIResponse) {
+  const dayCount = APIResponse.days.length;
+  const date = APIResponse.days.map((day) => format(day.datetime, "EEE do"));
   const conditions = APIResponse.days.map((day) => day.conditions);
-  const description = APIResponse.days.map((day) => day.description);
+  const description = APIResponse.days.map((day) => `${day.description}`);
   const icon = APIResponse.days.map((day) => day.icon);
   const temp = APIResponse.days.map((day) => day.temp);
   const tempmax = APIResponse.days.map((day) => day.tempmax);
@@ -40,6 +43,8 @@ function dayData(APIResponse) {
   const sunset = APIResponse.days.map((day) => day.sunset);
 
   return {
+    dayCount,
+    date,
     conditions,
     description,
     icon,
@@ -51,6 +56,11 @@ function dayData(APIResponse) {
     sunrise,
     sunset,
   };
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+  const celsius = `${Math.round((fahrenheit - 32) * (5 / 9))}℃`;
+  return celsius;
 }
 
 function testing(event) {
@@ -70,15 +80,24 @@ async function fetchWeather() {
     }
     const responsePromise = await fetch(searchString, { mode: "cors" });
     const response = await responsePromise.json();
+    console.log(response);
     displayWeather(response);
   } catch (error) {
     console.log(error);
   }
 }
 
-function addElement(tag = "div", classes = [], parent = null) {
+function addBasicElement(
+  tag = "div",
+  classes = [],
+  parent = null,
+  textContent = ""
+) {
   let element = document.createElement(tag);
   element.classList.add(classes);
+  if (textContent) {
+    element.textContent = textContent;
+  }
   if (parent) {
     parent.appendChild(element);
   }
@@ -88,12 +107,22 @@ function addElement(tag = "div", classes = [], parent = null) {
 function displayWeather(response) {
   removeAllChildNodes(resultContents);
   let data = dayData(response);
-  let day = addElement("div", "day", resultContents);
-  let icon = addElement("img", "day-icon", resultContents);
-  icon.src = getIcon(data.icon[0]);
-  icon.style.width = "6rem";
-  icon.style.aspectRatio = 1;
-  day.textContent = data.description[0];
+  console.log(data);
+  for (let i = 0; i < data.dayCount; i++) {
+    let day = addBasicElement("div", "day", resultContents);
+    let date = addBasicElement("div", "day__date", day, data.date[i]);
+    let description = addBasicElement(
+      "div",
+      "day__description",
+      day,
+      data.description[i]
+    );
+    let graphics = addBasicElement("div", "day__graphics", day)
+    let icon = addBasicElement("img", "day__icon", graphics);
+    icon.src = getIcon(data.icon[i]);
+    let temp = addBasicElement("div", "day__temp", graphics, fahrenheitToCelsius(data.temp[i]) );
+    
+  }
 }
 
 function getIcon(iconData) {
