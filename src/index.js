@@ -34,8 +34,35 @@ function fetchNewPic() {
     .then(function (response) {
       //img.style.display = "block";
       //img.src = response.data.images.original.url;
-      console.log(response.days.map((day) =>(day.description)))
+      console.log(dayData(response))
     });
+}
+
+function dayData(APIResponse) {
+  const conditions = APIResponse.days.map((day) =>(day.conditions))
+  const description = APIResponse.days.map((day)=>(day.description))
+  const icon = APIResponse.days.map((day)=>(day.icon))
+  const temp = APIResponse.days.map((day)=>(day.temp))
+  const tempmax = APIResponse.days.map((day)=>(day.tempmax))
+  const tempmin = APIResponse.days.map((day)=>(day.tempmin))
+  const winddir = APIResponse.days.map((day)=>(day.winddir))
+  const windspeed = APIResponse.days.map((day)=>(day.windspeed))
+  const sunrise = APIResponse.days.map((day)=>(day.sunrise))
+  const sunset = APIResponse.days.map((day)=>(day.sunset))
+
+  return {
+    conditions,
+    description,
+    icon,
+    temp,
+    tempmax,
+    tempmin,
+    winddir,
+    windspeed,
+    sunrise,
+    sunset
+  }
+
 }
 
 function testing(event) {
