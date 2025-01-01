@@ -121,7 +121,7 @@ button {
   max-width: 75%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1.25rem;
+  gap: 1.5rem;
   margin: 1rem;
   grid-auto-rows: min-content;
 }
