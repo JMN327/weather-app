@@ -1,6 +1,6 @@
 import "./styles.css";
 import { add, format } from "date-fns";
-import storageAvailable from "./local-storage.js";
+import storageAvailable from "./storage-available.js";
 //import ClassTemplate from "./class-template.js";
 import gifCloudy from "./gifs/cloudy.gif";
 import gifClearDay from "./gifs/clear-day.gif";
@@ -13,7 +13,8 @@ import gifSnow from "./gifs/snow.gif";
 import gifWind from "./gifs/wind.gif";
 
 console.log("Hello World!)");
-console.log(`Storage available: ${storageAvailable("localStorage")}`);
+console.log(`Local storage available: ${storageAvailable("localStorage")}`);
+console.log(`Session storage available: ${storageAvailable("sessionStorage")}`);
 
 const btn = document.querySelector("#btn");
 let search = document.querySelector("#search");
@@ -78,9 +79,21 @@ async function fetchWeather() {
     } else {
       searchString = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${search.value}?key=TNK3W4F4DRB846HC8URN7GCNE&iconSet=icons1`;
     }
-    const responsePromise = await fetch(searchString, { mode: "cors" });
-    const response = await responsePromise.json();
-    console.log(response);
+
+    let response;
+    const sessionData = sessionStorage.getItem(searchString);
+    if (sessionData) {
+      console.log("data retrieved from session storage")
+      response = JSON.parse(sessionData)
+      console.log(response);
+    } else {
+      console.log("data retrieved from visual crossing API")
+      const responsePromise = await fetch(searchString, { mode: "cors" });
+      response = await responsePromise.json();
+      sessionStorage.setItem(searchString, JSON.stringify(response))
+      console.log(response);
+    }
+    
     displayWeather(response);
   } catch (error) {
     console.log(error);
@@ -107,7 +120,6 @@ function addBasicElement(
 function displayWeather(response) {
   removeAllChildNodes(resultContents);
   let data = dayData(response);
-  console.log(data);
   for (let i = 0; i < data.dayCount; i++) {
     let day = addBasicElement("div", "day", resultContents);
     let date = addBasicElement("div", "day__date", day, data.date[i]);
@@ -120,6 +132,8 @@ function displayWeather(response) {
     let graphics = addBasicElement("div", "day__graphics", day)
     let icon = addBasicElement("img", "day__icon", graphics);
     icon.src = getIcon(data.icon[i]);
+    icon.style.borderColor = `hsl(${getHue(data.temp[i])},60%,75%)`
+    console.table({hue: getHue(data.temp[i]),temp:data.temp[i]})
     let temps = addBasicElement("div", "day__temps", graphics)
     let tempmax = addBasicElement("div", "day__tempmax", temps, fahrenheitToCelsius(data.tempmax[i]) );
     let tempmin = addBasicElement("div", "day__tempmin", temps, fahrenheitToCelsius(data.tempmin[i]) );
@@ -159,4 +173,18 @@ function getIcon(iconData) {
     default:
       break;
   }
+}
+
+function getHue(nowTemp) {
+  var maxHsl = 0; // maxHsl maps to max temp (here: 20deg past 360)
+  var minHsl = 170; //  minhsl maps to min temp counter clockwise
+  var rngHsl = maxHsl - minHsl; // = 170
+
+  var maxTemp = 77;
+  var minTemp = 32;
+  var rngTemp = maxTemp - minTemp; // 125
+  var degCnt = maxTemp - nowTemp; // 0
+  var hslsDeg = rngHsl / rngTemp;  //170 / 125 = 1.68 Hsl-degs to Temp-degs
+  var returnHue = (360 - ((degCnt * hslsDeg) - (maxHsl - 360))); 
+  return returnHue; 
 }
