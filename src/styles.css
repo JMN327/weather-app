@@ -13,6 +13,11 @@
   line-height: 1.25rem;
 }
 
+body {
+  min-width: 400px;
+  background-color: hsl(172, 100%, 98%);
+}
+
 input {
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
@@ -20,6 +25,7 @@ input {
   border-radius: 0.25rem;
   border: 0.125rem solid rgb(199, 199, 199);
   padding: 0.375rem;
+  box-shadow: 0 0.25rem  0.25rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 button {
@@ -29,6 +35,7 @@ button {
   border-radius: 0.25rem;
   border: 0.125rem solid rgb(199, 199, 199);
   padding: 0.375rem;
+  box-shadow: 0 0.25rem  0.25rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 .contents {
@@ -43,7 +50,7 @@ button {
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .form-item {
@@ -54,17 +61,19 @@ button {
   max-width: 75%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20ch, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
   margin: 1rem;
   grid-auto-rows: min-content;
 }
 
 .day {
+  background-color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  border-radius: 0.25rem;
-  border: 0.125rem solid rgb(199, 199, 199);
+  border-radius: 0.375rem;
+  border: 0.1875rem solid rgb(199, 199, 199);
+  box-shadow: 0 0.25rem  0.25rem 0.25rem rgba(0, 0, 0, 0.075);
   padding: 0.375rem;
   height: auto;
   display: flex;
@@ -90,15 +99,35 @@ button {
   height: 4.75rem;
 }
 
-.day__temp {
-  font-size: 2.25rem;
-  color: rgb(7, 39, 114);
-  margin-top: 0.5rem;
-}
-
 .day__graphics {
   display: flex;
-  justify-content: center;
-  flex-direction: row;
+  justify-content:space-around;
+  gap: 1rem;
   align-items: top;
+}
+
+.day__temps {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  font-size: 2rem;
+  color: rgb(7, 39, 114);
+
+}
+
+.day__tempmax {
+  
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+}
+
+.day__tempmin {
+
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+  
+
 }

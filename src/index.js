@@ -120,7 +120,9 @@ function displayWeather(response) {
     let graphics = addBasicElement("div", "day__graphics", day)
     let icon = addBasicElement("img", "day__icon", graphics);
     icon.src = getIcon(data.icon[i]);
-    let temp = addBasicElement("div", "day__temp", graphics, fahrenheitToCelsius(data.temp[i]) );
+    let temps = addBasicElement("div", "day__temps", graphics)
+    let tempmax = addBasicElement("div", "day__tempmax", temps, fahrenheitToCelsius(data.tempmax[i]) );
+    let tempmin = addBasicElement("div", "day__tempmin", temps, fahrenheitToCelsius(data.tempmin[i]) );
     
   }
 }
