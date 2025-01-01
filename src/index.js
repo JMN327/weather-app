@@ -122,6 +122,10 @@ function displayWeather(response) {
   let data = dayData(response);
   for (let i = 0; i < data.dayCount; i++) {
     let day = addBasicElement("div", "day", resultContents);
+    day.style.borderTopColor = `hsl(${getHue(data.temp[i])},60%,86%)`
+    day.style.borderLeftColor = `hsl(${getHue(data.temp[i])},60%,81%)`
+    day.style.borderRightColor = `hsl(${getHue(data.temp[i])},60%,81%)`
+    day.style.borderBottomColor = `hsl(${getHue(data.temp[i])},60%,75%)`
     let date = addBasicElement("div", "day__date", day, data.date[i]);
     let description = addBasicElement(
       "div",
@@ -177,7 +181,7 @@ function getIcon(iconData) {
 
 function getHue(nowTemp) {
   var maxHsl = 0; // maxHsl maps to max temp (here: 20deg past 360)
-  var minHsl = 170; //  minhsl maps to min temp counter clockwise
+  var minHsl = 210; //  minhsl maps to min temp counter clockwise
   var rngHsl = maxHsl - minHsl; // = 170
 
   var maxTemp = 77;
@@ -186,5 +190,7 @@ function getHue(nowTemp) {
   var degCnt = maxTemp - nowTemp; // 0
   var hslsDeg = rngHsl / rngTemp;  //170 / 125 = 1.68 Hsl-degs to Temp-degs
   var returnHue = (360 - ((degCnt * hslsDeg) - (maxHsl - 360))); 
+  returnHue = Math.max(maxHsl, returnHue)
+  returnHue = Math.min(minHsl, returnHue)
   return returnHue; 
 }
