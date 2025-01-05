@@ -200,8 +200,8 @@ function displayWeather(response) {
       unitTempMax = fahrenheitToCelsius(data.tempmax[i]);
       unitTempMin = fahrenheitToCelsius(data.tempmin[i]);
     } else {
-      unitTempMax = data.tempmax[i] + "℉";
-      unitTempMin = data.tempmin[i] + "℉";
+      unitTempMax = Math.round(data.tempmax[i]) + "℉";
+      unitTempMin = Math.round(data.tempmin[i]) + "℉";
     }
     let tempmax = addBasicElement("div", "day__tempmax", temps, unitTempMax);
     let tempmin = addBasicElement("div", "day__tempmin", temps, unitTempMin);
