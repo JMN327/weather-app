@@ -1,7 +1,6 @@
 import "./styles.css";
-import { add, format } from "date-fns";
+import { format } from "date-fns";
 import storageAvailable from "./storage-available.js";
-//import ClassTemplate from "./class-template.js";
 import gifCloudy from "./gifs/cloudy.gif";
 import gifClearDay from "./gifs/clear-day.gif";
 import gifClearNight from "./gifs/clear-night.gif";
@@ -11,25 +10,28 @@ import gifPartlyCloudyNight from "./gifs/partly-cloudy-night.gif";
 import gifRain from "./gifs/rain.gif";
 import gifSnow from "./gifs/snow.gif";
 import gifWind from "./gifs/wind.gif";
+import gifCelsius from "./gifs/celsius.gif";
+import gifFahrenheit from "./gifs/fahrenheit.gif";
 
 console.log("Hello World!)");
 console.log(`Local storage available: ${storageAvailable("localStorage")}`);
 console.log(`Session storage available: ${storageAvailable("sessionStorage")}`);
 
-const btn = document.querySelector("#btn");
 let search = document.querySelector("#search");
 let dateBox1 = document.querySelector("#date1");
 let dateBox2 = document.querySelector("#date2");
 let result = document.querySelector(".result");
-btn.addEventListener("click", (event) => testing(event));
+
+const btn = document.querySelector("#btn");
+const unitBtn = document.querySelector("#btn-units");
+const unitBtnImg = document.querySelector("#btn-units-img");
+
+getUnits();
+
 btn.addEventListener("click", fetchWeather);
+unitBtn.addEventListener("click", toggleUnits);
 
-function removeAllChildNodes(parent) {
-  while (parent.firstChild) {
-    parent.removeChild(parent.firstChild);
-  }
-}
-
+//factory function to get the relevant data from the API in an object
 function dayData(APIResponse) {
   const dayCount = APIResponse.days.length;
   const resolvedAddress = APIResponse.resolvedAddress;
@@ -39,7 +41,7 @@ function dayData(APIResponse) {
   const icon = APIResponse.days.map((day) => day.icon);
   const temp = APIResponse.days.map((day) => day.temp);
   const averageTemp =
-  temp.reduce(function (sum, value) {
+    temp.reduce(function (sum, value) {
       return sum + value;
     }, 0) / temp.length;
   const tempmax = APIResponse.days.map((day) => day.tempmax);
@@ -72,8 +74,36 @@ function fahrenheitToCelsius(fahrenheit) {
   return celsius;
 }
 
-function testing(event) {
-  console.log("test:", search.value);
+function toggleUnits() {
+  console.log("toggling Units");
+  let units = getUnits();
+  console.log("units: " + units);
+  if (units == "C") {
+    setUnits("F");
+    unitBtn.src = gifFahrenheit;
+  } else {
+    setUnits("C");
+    unitBtn.src = gifCelsius;
+  }
+  fetchWeather();
+}
+
+function getUnits() {
+  let unit = localStorage.getItem("units");
+  if (unit) {
+    setUnits(unit);
+    return unit;
+  } else {
+    setUnits("C");
+    return "C";
+  }
+}
+
+function setUnits(unit) {
+  localStorage.setItem("units", unit);
+  unit == "C"
+    ? (unitBtnImg.src = gifFahrenheit)
+    : (unitBtnImg.src = gifCelsius);
 }
 
 async function fetchWeather() {
@@ -138,7 +168,7 @@ function displayWeather(response) {
     result,
     data.resolvedAddress
   );
-  console.log("av. temp.: " + data.averageTemp)
+  console.log("av. temp.: " + data.averageTemp);
   place.style.borderTopColor = `hsl(${getHue(data.averageTemp)},60%,86%)`;
   place.style.borderLeftColor = `hsl(${getHue(data.averageTemp)},60%,81%)`;
   place.style.borderRightColor = `hsl(${getHue(data.averageTemp)},60%,81%)`;
@@ -162,20 +192,19 @@ function displayWeather(response) {
     let icon = addBasicElement("img", "day__icon", graphics);
     icon.src = getIcon(data.icon[i]);
     icon.style.borderColor = `hsl(${getHue(data.temp[i])},60%,75%)`;
-    //console.table({hue: getHue(data.temp[i]),temp:data.temp[i]})
     let temps = addBasicElement("div", "day__temps", graphics);
-    let tempmax = addBasicElement(
-      "div",
-      "day__tempmax",
-      temps,
-      fahrenheitToCelsius(data.tempmax[i])
-    );
-    let tempmin = addBasicElement(
-      "div",
-      "day__tempmin",
-      temps,
-      fahrenheitToCelsius(data.tempmin[i])
-    );
+    let unitTempMax;
+    let unitTempMin;
+    let thisUnit = getUnits()
+    if (thisUnit == "C") {
+      unitTempMax = fahrenheitToCelsius(data.tempmax[i]);
+      unitTempMin = fahrenheitToCelsius(data.tempmin[i]);
+    } else {
+      unitTempMax = data.tempmax[i] + "℉";
+      unitTempMin = data.tempmin[i] + "℉";
+    }
+    let tempmax = addBasicElement("div", "day__tempmax", temps, unitTempMax);
+    let tempmin = addBasicElement("div", "day__tempmin", temps, unitTempMin);
   }
 }
 
@@ -227,4 +256,10 @@ function getHue(nowTemp) {
   returnHue = Math.max(maxHsl, returnHue);
   returnHue = Math.min(minHsl, returnHue);
   return returnHue;
+}
+
+function removeAllChildNodes(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
 }

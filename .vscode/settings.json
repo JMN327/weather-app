@@ -3,8 +3,11 @@
     "ignorePattern": "webpack.config.js"
   },
   "cSpell.words": [
+    "degs",
     "farenheit",
     "gifs",
+    "hsls",
+    "minhsl",
     "tempmax",
     "tempmin",
     "winddir",
